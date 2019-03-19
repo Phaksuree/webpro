@@ -3,6 +3,9 @@ var express = require('express')
 var url = "mongodb://localhost:27017"
 var fs = require('fs')
 var app = express()
+
+var bodyParser = require('body-parser')
+app.use(bodyParser.json())
 /*var obj =[
     {
     "id" : 1,
@@ -65,6 +68,21 @@ app.get('/getUsers/:id',function(req,res){
         })
     });
 
+})
+
+app.post('/addUser',function(req,res){
+       
+    mongoClient.connect(url,function(err,db){
+        if(err) throw err;
+        var dbo = db.db("example02");
+        var myobj = req.body
+
+        dbo.collection("user").insertOne(myobj,function(err,result){
+           if(err) throw err
+           res.end(JSON.stringify(result))
+           db.close()        
+           })
+        })
 })
 
 var server = app.listen(3000,function(){
